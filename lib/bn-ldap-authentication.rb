@@ -22,9 +22,13 @@ module LdapAuthenticator
             encryption: provider_info[:encryption]
         )
 
+        ldap_filter = "(#{provider_info[:uid]}=#{user_params[:username]})"
+        if provider_info[:filter]
+          ldap_filter "(&(#{ldap_filter})(#{provider_info[:filter]}))"
+        end
         ldap.bind_as(
             base: provider_info[:base],
-            filter: "(#{provider_info[:uid]}=#{user_params[:username]})",
+            filter: ldap_filter,
             password: user_params[:password]
         )
     end
